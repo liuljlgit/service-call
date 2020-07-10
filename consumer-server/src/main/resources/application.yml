@@ -1,40 +1,32 @@
 server:
   port: 50005
 
-#ribbon配置
 ribbon:
   eager-load:
     enabled: true
-    clients:  #提前预热，避免第一次请求失败
+    clients:
       - provider-server
-  ReadTimeout: 6000     #处理请求的超时时间，默认为1秒
-  ConnectTimeout: 6000  #连接建立的超时时长，默认1秒
-  MaxAutoRetries: 0 #同一台实例的最大重试次数，但是不包括首次调用，默认为1次
-  MaxAutoRetriesNextServer: 1 #重试负载均衡其他实例的最大重试次数，不包括首次调用，默认为0次
-  OkToRetryOnAllOperations: false #是否对所有操作都重试，默认false
+  ReadTimeout: 6000
+  ConnectTimeout: 6000
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 1
+  OkToRetryOnAllOperations: false
 
-#feign配置
 feign:
   hystrix:
-    enabled: true #Feign是否启用断路器,默认为false
-  client:
-    config:
-      connectTimeout: 10000 #Feign的连接建立超时时间，默认为10秒
-      readTimeout: 60000  #Feign的请求处理超时时间，默认为60
-      retryer: feign.Retryer.Default #Feign使用默认的超时配置，在该类源码中可见，默认单次请求最大时长1秒，重试5次
+    enabled: true
 
-#hystrix配置
 hystrix:
   command:
     default:
       execution:
         timeout:
-          enable: true  #//为false则超时控制有ribbon控制，为true则hystrix超时和ribbon超时都是用，但是谁小谁生效
+          enable: true
         isolation:
           thread:
-            timeoutInMilliseconds: 3000 #熔断器的超时时长默认1秒，最常修改的参数
+            timeoutInMilliseconds: 3000
 circuitBreaker:
-  requestVolumeThreshold: 20  #触发熔断的最小请求次数，默认为20
-  sleepWindowInMilliseconds: 5000 #休眠时长，默认为5秒
-  errorThresholdPercentage: 50 #触发熔断的失败请求最小占比，默认50%
+  requestVolumeThreshold: 20
+  sleepWindowInMilliseconds: 5000
+  errorThresholdPercentage: 50
 

@@ -4,7 +4,8 @@ import com.cloud.personal.providerserverclient.constant.ServiceNameConst;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@FeignClient(value = ServiceNameConst.SERVICE_PROVIDER_SERVER)
+//@FeignOAuth2RequestInterceptorAnnotation
+@FeignClient(value = ServiceNameConst.SERVICE_PROVIDER_SERVER/**,configuration = FeignOAuth2RequestInterceptor.class*/)
 public interface ProviderFeignClient {
 
     @GetMapping("feign/provider/test")
