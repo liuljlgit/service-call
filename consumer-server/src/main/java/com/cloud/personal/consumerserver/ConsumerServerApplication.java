@@ -4,6 +4,7 @@ import com.cloud.personal.servicecallbase.feign.interceptor.global.EnableFeignIn
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -19,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableAspectJAutoProxy
 @ComponentScan("com.cloud")
 @MapperScan("com.cloud.**.dao")
-@SpringBootApplication(scanBasePackages = {"com.cloud.personal"})
+@SpringBootApplication(scanBasePackages = {"com.cloud.personal"},exclude = DataSourceAutoConfiguration.class)
 @EnableFeignClients(value = {"com.cloud.personal"})
 public class ConsumerServerApplication {
 

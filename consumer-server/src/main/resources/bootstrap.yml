@@ -14,6 +14,28 @@ spring:
         namespace: 50c24e71-65f9-4f49-b387-984387e376e7
         group: LLJ_GROUP
 
+seata:
+  enabled: true
+  application-id: consumer-server
+  tx-service-group: consumer-server_tx_group
+  enable-auto-data-source-proxy: true
+  config:
+    type: nacos
+    nacos:
+      namespace:
+      serverAddr: 192.168.189.201:8848
+      group: SEATA_GROUP
+      userName: "nacos"
+      password: "nacos"
+  registry:
+    type: nacos
+    nacos:
+      application: seata-server
+      server-addr: 192.168.189.201:8848
+      namespace:
+      userName: "nacos"
+      password: "nacos"
+
 management:
   endpoints:
     web:

@@ -4,6 +4,7 @@ import com.cloud.personal.consumerserver.cache.impl.OrdersCacheImpl;
 import com.cloud.personal.consumerserver.entity.Orders;
 import com.cloud.personal.consumerserver.service.IOrdersService;
 import com.cloud.personal.providerserverclient.client.ProviderFeignClient;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class OrdersServiceImpl extends OrdersCacheImpl implements IOrdersService
     ProviderFeignClient providerFeignClient;
 
     @Override
+    @GlobalTransactional
     @Transactional(rollbackFor = Exception.class)
     public void addOrder() {
         //创建一个订单
@@ -43,7 +45,7 @@ public class OrdersServiceImpl extends OrdersCacheImpl implements IOrdersService
         providerFeignClient.reduceStock(2);
 
         //模拟异常操作
-        int i = 1 / 0;
+//        int i = 1 / 0;
 
         //打印日志
         log.info("完成下订单操作");
