@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cloud.personal.consumerserver.dao.IOrdersDao">
+    <resultMap id="BaseResultMap" type="com.cloud.personal.consumerserver.entity.Orders">
+        <id column="or_id" jdbcType="BIGINT" property="orId" />
+        <result column="order_seq" jdbcType="VARCHAR" property="orderSeq" />
+        <result column="p_id" jdbcType="BIGINT" property="pId" />
+        <result column="order_num" jdbcType="INTEGER" property="orderNum" />
+        <result column="order_price" jdbcType="DECIMAL" property="orderPrice" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        or_id,order_seq,p_id,order_num,order_price,create_time,remark
+    </sql>
+
+    <sql id="Base_Object_List">
+        #{at.orId},#{at.orderSeq},#{at.pId},#{at.orderNum},#{at.orderPrice},#{at.createTime},#{at.remark}
+    </sql>
+
+    <sql id="Set_Not_Null_List">
+        <set>
+            <if test="ut.orId != null">
+                or_id = #{ut.orId},
+            </if>
+            <if test="ut.orderSeq != null">
+                order_seq = #{ut.orderSeq},
+            </if>
+            <if test="ut.pId != null">
+                p_id = #{ut.pId},
+            </if>
+            <if test="ut.orderNum != null">
+                order_num = #{ut.orderNum},
+            </if>
+            <if test="ut.orderPrice != null">
+                order_price = #{ut.orderPrice},
+            </if>
+            <if test="ut.createTime != null">
+                create_time = #{ut.createTime},
+            </if>
+            <if test="ut.remark != null">
+                remark = #{ut.remark}
+            </if>
+        </set>
+    </sql>
+
+    <sql id="Set_With_Null_List">
+        <set>
+            or_id = #{ut.orId},
+            order_seq = #{ut.orderSeq},
+            p_id = #{ut.pId},
+            order_num = #{ut.orderNum},
+            order_price = #{ut.orderPrice},
+            create_time = #{ut.createTime},
+            remark = #{ut.remark}
+        </set>
+    </sql>
+
+    <sql id="For_Each_Condition">
+        <foreach collection="conditGroup.conditions" item="condit">
+            <choose>
+                <when test="condit.noValue">
+                ${condit.condition}
+                </when>
+                <when test="condit.oneValue">
+                ${condit.condition} #{condit.value1}
+                </when>
+                <when test="condit.secondValue">
+                ${condit.condition} #{condit.value1} and #{condit.value2}
+                </when>
+                <when test="condit.listValue">
+                ${condit.condition}
+                    <foreach collection="condit.list" item="listItem" open="(" close=")" separator=",">
+                    #{listItem}
+                    </foreach>
+                </when>
+            </choose>
+        </foreach>
+    </sql>
+
+    <sql id="where_sql">
+        <if test="st.orId != null">
+            AND or_id = #{st.orId}
+        </if>
+        <if test="st.orderSeq != null">
+            AND order_seq = #{st.orderSeq}
+        </if>
+        <if test="st.pId != null">
+            AND p_id = #{st.pId}
+        </if>
+        <if test="st.orderNum != null">
+            AND order_num = #{st.orderNum}
+        </if>
+        <if test="st.orderPrice != null">
+            AND order_price = #{st.orderPrice}
+        </if>
+        <if test="st.createTime != null">
+            AND create_time = #{st.createTime}
+        </if>
+        <if test="st.remark != null">
+            AND remark = #{st.remark}
+        </if>
+        <if test="st.conditGroups != null">
+            <foreach collection="st.conditGroups" item="conditGroup" separator=" ">
+                <if test="conditGroup.valid">
+                    ${conditGroup.opt}
+                    <choose>
+                        <when test="conditGroup.conditions.size() > 1">
+                            <trim prefix="(" prefixOverrides="and|or" suffix=")">
+                                <include refid="For_Each_Condition" />
+                            </trim>
+                        </when>
+                        <otherwise>
+                            <trim prefixOverrides="and|or">
+                                <include refid="For_Each_Condition" />
+                            </trim>
+                        </otherwise>
+                    </choose>
+                </if>
+            </foreach>
+        </if>
+    </sql>
+
+    <!--获取最大的主键-->
+    <select id="selectMaxId" resultType="java.lang.Long">
+        select IFNULL(max(or_id), 0) from `orders`
+    </select>
+
+    <!--根据主键获取对象-->
+    <select id="selectById" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" /> from orders
+        <where>
+            AND or_id = #{orId}
+        </where>
+    </select>
+
+    <!--查询列表-->
+    <select id="selectList" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" /> from orders
+        <where>
+            <include refid="where_sql" />
+        </where>
+        <if test="st.orderByList!=null and st.orderByList.size() > 0">
+            order by
+            <foreach collection="st.orderByList" item="order" separator=",">
+                ${order.field} ${order.mode}
+            </foreach>
+        </if>
+        <if test="st.index != null and st.pageSize != null and st.pageSize > 0" >
+            limit #{st.index},#{st.pageSize}
+        </if>
+    </select>
+
+    <!--查询列表-->
+    <select id="selectFieldList" resultMap="BaseResultMap">
+        select
+        <foreach collection="fl" item="field" separator=",">
+            ${field}
+        </foreach>
+        from orders
+        <where>
+            <include refid="where_sql" />
+        </where>
+        <if test="st.orderByList!=null and st.orderByList.size() > 0">
+            order by
+            <foreach collection="st.orderByList" item="order" separator=",">
+            ${order.field} ${order.mode}
+            </foreach>
+        </if>
+        <if test="st.index != null and st.pageSize != null and st.pageSize > 0" >
+            limit #{st.index},#{st.pageSize}
+        </if>
+    </select>
+
+    <!--查询列表总数-->
+    <select id="selectCount" resultType="java.lang.Long">
+        select count(1) from orders
+        <where>
+            <include refid="where_sql" />
+        </where>
+    </select>
+
+    <!--根据ID列表获取记录列表-->
+    <select id="selectBatchIds" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List" /> from orders
+        <where>
+        or_id in
+            <foreach collection="list" open="(" close=")" separator="," item="item">
+            #{item}
+            </foreach>
+        </where>
+    </select>
+
+    <!--插入对象-->
+    <insert id="add">
+        insert into orders(<include refid="Base_Column_List" />)
+        values(<include refid="Base_Object_List" />)
+    </insert>
+
+    <!--批量插入对象-->
+    <insert id="addBatch">
+        insert into orders(<include refid="Base_Column_List" />)
+        values
+        <foreach collection="list" index="index" item="at" separator=",">
+            (<include refid="Base_Object_List" />)
+        </foreach>
+    </insert>
+
+    <!--更新对象-->
+    <update id="updateNotNull">
+        update orders
+        <include refid="Set_Not_Null_List" />
+        <where>
+            AND or_id = #{ut.orId}
+        </where>
+    </update>
+
+    <!--批量更新对象-->
+    <update id="updateBatchNotNull">
+        <foreach collection="list" separator=";" item="ut">
+            update orders
+            <include refid="Set_Not_Null_List" />
+            <where>
+                AND or_id = #{ut.orId}
+            </where>
+        </foreach>
+    </update>
+
+    <!--更新对象(全更新)-->
+    <update id="updateWithNull">
+        update orders
+        <include refid="Set_With_Null_List" />
+        <where>
+            AND or_id = #{ut.orId}
+        </where>
+    </update>
+
+    <!--批量更新对象(全更新)-->
+    <update id="updateBatchWithNull">
+        <foreach collection="list" separator=";" item="ut">
+            update orders
+            <include refid="Set_With_Null_List" />
+            <where>
+                AND or_id = #{ut.orId}
+            </where>
+        </foreach>
+    </update>
+
+    <!--更新对象,根据查询条件更新-->
+    <update id="updateByMap">
+        update orders
+        <set>
+            <foreach collection="um" index="key" item="value" separator=",">
+                ${key} = #{value}
+            </foreach>
+        </set>
+        <where>
+            <include refid="where_sql" />
+        </where>
+    </update>
+
+    <!--根据查询条件删除记录-->
+    <delete id="delete">
+        delete from orders
+        <where>
+            <include refid="where_sql" />
+        </where>
+    </delete>
+
+    <!--根据主键删除对象-->
+    <delete id="deleteById">
+        delete from orders
+        <where>
+            AND or_id = #{orId}
+        </where>
+    </delete>
+
+    <!-- 批量删除对象 -->
+    <delete id="deleteBatchIds">
+        delete from orders
+        <where>
+            or_id in
+            <foreach collection="list" open="(" close=")" separator="," item="item">
+                #{item}
+            </foreach>
+        </where>
+    </delete>
+
+
+    <!--~~~~~~~~~~~~~~~~~~~~~~ custom code begin ~~~~~~~~~~~~~~~~~~~~~~-->
+    
+    <!--~~~~~~~~~~~~~~~~~~~~~~ custom code end ~~~~~~~~~~~~~~~~~~~~~~-->
+
+</mapper>

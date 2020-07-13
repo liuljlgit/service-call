@@ -3,4 +3,25 @@ spring:
     name: provider-server
   main:
     allow-bean-definition-overriding: true
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://${DEV.HOST:localhost}:3306/cloud?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&pinGlobalTxToPhysicalConnection=true&useSSL=false
+    username: root
+    password: root
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 10000
+    testOnBorrow: true
+    testOnReturn: false
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+
+#mybatis配置
+mybatis:
+  type-aliases-package: com.cloud.**.entity
+  mapper-locations: classpath:mybatis/mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true  #配置驼峰式规则自动转换
 

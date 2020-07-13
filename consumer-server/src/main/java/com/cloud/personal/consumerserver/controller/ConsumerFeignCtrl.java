@@ -1,5 +1,6 @@
 package com.cloud.personal.consumerserver.controller;
 
+import com.cloud.personal.consumerserver.service.IOrdersService;
 import com.cloud.personal.providerserverclient.client.ProviderFeignClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,17 @@ public class ConsumerFeignCtrl {
     @Autowired
     ProviderFeignClient providerFeignClient;
 
+    @Autowired
+    IOrdersService ordersService;
+
     @RequestMapping("/feign/consumer/test")
     public void consumerTest(){
         log.info("log:" + providerFeignClient.feignProviderTest());
+    }
+
+    @RequestMapping("/feign/consumer/addorder")
+    public void addOrder(){
+        ordersService.addOrder();
     }
 
 }
