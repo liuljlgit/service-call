@@ -45,7 +45,7 @@ public class OrdersServiceImpl extends OrdersCacheImpl implements IOrdersService
         providerFeignClient.reduceStock(2);
 
         //模拟异常操作
-//        int i = 1 / 0;
+        int i = 1 / 0;
 
         //打印日志
         log.info("完成下订单操作");
