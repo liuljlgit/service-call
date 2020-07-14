@@ -12,21 +12,57 @@ ribbon:
   MaxAutoRetriesNextServer: 1
   OkToRetryOnAllOperations: false
 
+#feign配置
 feign:
   hystrix:
     enabled: true
+  client:
+    config:
+      default:
+        loggerLevel: full     # 配置Feign的日志级别，相当于代码配置方式中的Logger
+        #errorDecoder: feign.codec.Default  # Feign的错误解码器
+        connectTimeout: 10000 #Feign的连接建立超时时间，默认为10秒
+        readTimeout: 60000  #Feign的请求处理超时时间，默认为60
+        retryer: feign.Retryer.Default #Feign使用默认的超时配置，在该类源码中可见，默认单次请求最大时长1秒，重试5次
+        decode404: false  #是否对404错误解码
+          #requestInterceptors: # 配置拦截器
+        #  - com.example.FooRequestInterceptor
+        #encode: com.example.SimpleEncoder        #配置自定义/默认编码
+        #decoder: com.example.SimpleDecoder       #配置自定义/默认解码
+        #contract: com.example.SimpleContract     #配置自定义/默认契约，注解支持
+  compression:
+    request:
+      enabled: true
+      mime-types: text/xml,application/xml,application/json
+      min-request-size: 2048
+    response:
+      enabled: true
+      useGzipDecoder: true
+  httpclient: #httpclient配置，一般使用默认就行
+    enabled: true
+    follow-redirects: true
+    connection-timeout: 2000
+    connection-timer-repeat: 3000
+    max-connections: 200
+    disable-ssl-validation: false
+    time-to-live: 900
+    time-to-live-unit: seconds
+    max-connections-per-route: 50
+  #okhttp:            如果不想使用httpclient,也可以支持okhttp,但是需要引入okhttp包并且额外配置
+  #  enabled: true
 
+#如果feign启用该了hystrix,可以配置hystrix
 hystrix:
   command:
     default:
       execution:
         timeout:
-          enable: true
+          enable: true #为false则超时控制有ribbon控制，为true则hystrix超时和ribbon超时都是用，但是谁小谁生效
         isolation:
           thread:
-            timeoutInMilliseconds: 3000
+            timeoutInMilliseconds: 3000 #降级超时时间
       circuitBreaker:
-        requestVolumeThreshold: 20
-        sleepWindowInMilliseconds: 5000
-        errorThresholdPercentage: 50
+        requestVolumeThreshold: 20  #触发熔断的最小请求次数，默认为20
+        sleepWindowInMilliseconds: 5000 #休眠时长，默认为5秒
+        errorThresholdPercentage: 50 #触发熔断的失败请求最小占比，默认50%
 
